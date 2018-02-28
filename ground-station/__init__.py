@@ -14,10 +14,10 @@ api = Api(app)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    latitude, longitude = 51.508742, -0.120850
+    loc = {"lat": latitude, "lng": longitude}
+    return render_template("index2.html", loc=loc)
 
-longitude = 51.508742
-latitude = -0.120850
 @app.route('/', methods = ['POST'])
 def PostHandler():
     data = request.get_data()
