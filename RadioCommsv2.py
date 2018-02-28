@@ -1,3 +1,6 @@
+"""Built upon the code given by Catapult
+Author: Trevor Leung"""
+
 from Tkinter import *
 import Tkinter as tk
 import threading
@@ -43,6 +46,12 @@ class App():
                           command= lambda : self.transmit("CSS:Hackathon!"))
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
+        # Receive the data button!!
+        self.SBD = Button(frame,
+                          text="Transmit data",
+                          command=lambda: self.receive)
+        self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
+
     # Response function
     def response(self, confirmation, message):
         while (True):
@@ -50,7 +59,7 @@ class App():
             _read_line = iridium.readline().strip()
             if (_read_line != ""):
                 _information = _read_line
-                print (_information)
+                print(_information)
             if (_read_line == "ERROR"):
                 iridium.flush()
                 print("X: ERROR in Response. Try Again\n")
@@ -64,21 +73,21 @@ class App():
     # MT Function
     def receive(self):
         # Here we go again
-        print("\nQuery the device for registration status")
+        print("\n1. Query the device for registration status")
         command = "AT+SBDREG?"
         iridium.write(command + "\r\n")
         self.response("+SBDREG:2", "Read message code")
         "Reply is +SBDREG:SOMETHING"
 
         # Initiate an SBD session in answer to the automatic notification
-        print("Initiating an SBD session")
+        print("2. Initiating an SBD session")
         command = "AT+SBDIXA"
         iridium.write(command + "\r\n")
         self.response("+SBDIXA:", "Read message code")
         "Reply is +SBDIXA:SOMETHING"
 
         # Getting the message
-        print("Getting the message")
+        print("3. Getting the message")
         command = "AT+SBDRB"
         iridium.write(command + "\r\n")
         self.rx_message = self.response("", "Message received")  # Whatever we have literally
@@ -87,14 +96,14 @@ class App():
     # MO Function
     def transmit(self, message):
         # Enabling indicator event reporting
-        print("\nEnabling error indicator...\n")
+        print("\n1. Enabling error indicator...\n")
         command = "AT+CIER=1,0,1,0"
         iridium.write(command + "\r\n")
         self.response("OK", "Indicator enabled\n")
         """Reply is OK"""
 
         # Initializing
-        print("\nTransmitting message...\n")
+        print("\n2. Load the message...\n")
         command = "AT+SBDWB=" + str(len(message))
         iridium.write(command + "\r\n")
         self.response("READY", "Trying to transmit")
@@ -111,6 +120,7 @@ class App():
         """Reply is 0"""
 
         # Send the message
+        print("\n3. Transmit the message...")
         command = "AT+SBDIX"
         iridium.write(command + "\r\n")
         while (True):
