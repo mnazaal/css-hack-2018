@@ -1,15 +1,10 @@
-from Tkinter import *
+import time
+
 import Tkinter as tk
-import threading
+import serial
 # import Image
 from PIL import Image, ImageTk
-from gi.repository import Gtk
-import sys
-import glob
-import signal
-import sys
-import serial
-import time
+from Tkinter import *
 
 iridium = serial.Serial("/dev/ttyUSB0", 19200, timeout=0)
 
