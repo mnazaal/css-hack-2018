@@ -94,7 +94,10 @@ class App():
             if (_read_line != ""):  # Whatever they give it back to us...
                 _information = _read_line
                 print(_information)
-                break
+            if ("SBDIX: " in _read_line):  # Check for sequence +SBDIX
+                iridium.flush()
+                print(message + "\r\n")
+                break  # get away from the while loop
         """Reply is +SBDIX: ?,?,?,?,?,?"""
 
         # Ending the transmission
