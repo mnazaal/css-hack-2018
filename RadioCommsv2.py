@@ -17,6 +17,7 @@ iridium = serial.Serial("/dev/ttyUSB0", 19200, timeout=0)  # This is where you s
 class App():
 
     def __init__(self, master):
+        self.rx_message = ""
         frame = Frame(master)
         frame.pack(fill=BOTH, expand=YES)
         self.button = Button(frame,
@@ -54,10 +55,34 @@ class App():
                 iridium.flush()
                 print("X: ERROR in Response. Try Again\n")
                 break
-            if (_read_line == confirmation):  # Confirmation code you should get from the device
+            if (confirmation in _read_line):  # Confirmation code you should get from the device
                 iridium.flush()
                 print(message + "\r\n")
+                return message
                 break  # get away from the while loop
+
+    # MT Function
+    def receive(self):
+        # Here we go again
+        print("\nQuery the device for registration status")
+        command = "AT+SBDREG?"
+        iridium.write(command + "\r\n")
+        self.response("+SBDREG:2", "Read message code")
+        "Reply is +SBDREG:SOMETHING"
+
+        # Initiate an SBD session in answer to the automatic notification
+        print("Initiating an SBD session")
+        command = "AT+SBDIXA"
+        iridium.write(command + "\r\n")
+        self.response("+SBDIXA:", "Read message code")
+        "Reply is +SBDIXA:SOMETHING"
+
+        # Getting the message
+        print("Getting the message")
+        command = "AT+SBDRB"
+        iridium.write(command + "\r\n")
+        self.rx_message = self.response("", "Message received")  # Whatever we have literally
+
 
     # MO Function
     def transmit(self, message):
