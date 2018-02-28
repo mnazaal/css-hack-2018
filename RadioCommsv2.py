@@ -49,14 +49,14 @@ class App():
             _read_line = iridium.readline().strip()
             if (_read_line != ""):
                 _information = _read_line
-                print (_information)
+                print ("X" + _information)
             if (_read_line == "ERROR"):
                 iridium.flush()
-                print("ERROR in Response. Try Again\n")
+                print("X: ERROR in Response. Try Again\n")
                 break
             if (_read_line == confirmation):  # Confirmation code you should get from the device
                 iridium.flush()
-                print(message)
+                print("X: " + message)
                 break  # get away from the while loop
 
     # MO Function
@@ -66,12 +66,14 @@ class App():
         command = "AT+CIER=1,0,1,0"
         iridium.write(command + "\r\n")
         self.response("OK", "Error indicator enabled\n")
+        """Reply is OK"""
 
         # Initializing
         print("\nTransmitting message\n")
         command = "AT+SBDWB=" + str(len(message))
         iridium.write(command + "\r\n")
         self.response("READY", "Beginning transmission...")
+        """Reply is READY"""
 
         # Load the message
         iridium.write(message + "\r")  # + "\r\n"
@@ -81,6 +83,7 @@ class App():
         iridium.write(chr(checksum >> 8))  # Adding checksum... [Verified it's working]
         iridium.write(chr(checksum & 0xFF))
         self.response("0", "Message is loaded...")
+        """Reply is 0"""
 
         # Send the message
         command = "AT+SBDIX"
@@ -92,6 +95,7 @@ class App():
                 _information = _read_line
                 print(_information)
                 break
+        """Reply is +SBDIX: ?,?,?,?,?,?"""
 
         # Ending the transmission
         command = "AT+SBDD0"  # Clearing buffer
@@ -156,7 +160,7 @@ class App():
 
 root = Tk()
 ment = StringVar()
-root.title("Hackathlon")
+root.title("Hackathon")
 root.geometry("600x400")
 imageFile = "sac.png"
 image1 = ImageTk.PhotoImage(Image.open(imageFile))
