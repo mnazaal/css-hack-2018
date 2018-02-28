@@ -38,9 +38,9 @@ class App():
 
         # Transmit the data button!!
         self.SBD = Button(frame,
-                          text="Transmit data!",
-                          command=self.transmit("CSS:Hackathon Rocks!"))
-        self.SBD.pack(side-TOP, anchor=W, fill=X, expand=YES)
+                          text="Transmit data",
+                          command= lambda : self.transmit("CSS:Hackathon!"))
+        self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
     # Response function
     def response(self, confirmation, message):
@@ -49,40 +49,40 @@ class App():
             _read_line = iridium.readline().strip()
             if (_read_line != ""):
                 _information = _read_line
-                print ("X" + _information)
+                print (_information)
             if (_read_line == "ERROR"):
                 iridium.flush()
                 print("X: ERROR in Response. Try Again\n")
                 break
             if (_read_line == confirmation):  # Confirmation code you should get from the device
                 iridium.flush()
-                print("X: " + message)
+                print(message + "\r\n")
                 break  # get away from the while loop
 
     # MO Function
     def transmit(self, message):
         # Enabling indicator event reporting
-        print("\nEnabling error indicator event reporting command sent. Awaiting Response\n")
+        print("\nEnabling error indicator...\n")
         command = "AT+CIER=1,0,1,0"
         iridium.write(command + "\r\n")
-        self.response("OK", "Error indicator enabled\n")
+        self.response("OK", "Indicator enabled\n")
         """Reply is OK"""
 
         # Initializing
-        print("\nTransmitting message\n")
+        print("\nTransmitting message...\n")
         command = "AT+SBDWB=" + str(len(message))
         iridium.write(command + "\r\n")
-        self.response("READY", "Beginning transmission...")
+        self.response("READY", "Trying to transmit")
         """Reply is READY"""
 
         # Load the message
-        iridium.write(message + "\r")  # + "\r\n"
+        iridium.write(message)  # + "\r\n"
         checksum = 0
         for c in message:  # Message is specified in the TkInter as above
             checksum = checksum + ord(c)
         iridium.write(chr(checksum >> 8))  # Adding checksum... [Verified it's working]
         iridium.write(chr(checksum & 0xFF))
-        self.response("0", "Message is loaded...")
+        self.response("0", "Loaded successfully...")
         """Reply is 0"""
 
         # Send the message
