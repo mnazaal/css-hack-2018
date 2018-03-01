@@ -45,13 +45,13 @@ class App():
         # Transmit the data button!!
         self.SBD = Button(frame,
                           text="Tx",
-                          command= lambda : self.transmit("CSS:Hackathon!"))
+                          command=lambda: self.transmit("CSS:Hackathon!"))
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
         # Receive the data button!!
         self.SBD = Button(frame,
                           text="Rx",
-                          command=lambda: self.receive)
+                          command=self.receive)
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
     # Response function
@@ -173,21 +173,6 @@ class App():
         time.sleep(0.5)
         # i=0
         self.response("OK", "Response Received Successfully")
-        # while True:
-        #     time.sleep(0.1)
-        #     _read_line = iridium.readline().strip()
-        #
-        #     if _read_line != b"":
-        #         _information = _read_line
-        #         print (_information)
-        #     if _read_line == b"ERROR":
-        #         iridium.flush()
-        #         print("ERROR in Response. Try Again\n")
-        #         break
-        #     if _read_line == b"OK":
-        #         iridium.flush()
-        #         print("Response Received Successfully\n")
-        #         break
         extra_read_line = iridium.readline().strip()
         print(extra_read_line.decode() + "\n")  # Blanc??
 
