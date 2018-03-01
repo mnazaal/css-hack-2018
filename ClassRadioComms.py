@@ -8,7 +8,7 @@ import time
 iridium = serial.Serial("/dev/ttyUSB0", 19200, timeout=0)  # This is where you set up to talk to the device
 
 
-class App():
+class Irc():
 
     def __init__(self):
         self.rx_message = ""

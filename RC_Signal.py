@@ -1,6 +1,6 @@
-from ClassRadioComms import App
+from ClassRadioComms import Irc
 
-test = App()
+test = Irc()
 test.signal_strength()
 test.turn_off()
 # test.transmit("CSS:Hackathon!")
