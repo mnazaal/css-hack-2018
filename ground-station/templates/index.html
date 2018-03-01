@@ -7,16 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 75%;
-        margin: 0;
-        padding: 0;
+      div.relative {
+        position: relative;
+        left: 30px;
       }
     </style>
   </head>
@@ -45,7 +38,7 @@
 &callback=initMap"
     async defer></script>
 
-<div class="float">
+<div class="relative">
   <img src="/static/416x416.jpg" alt="ElonMusk" style="width:10%">
   <h1>Elon Musk</h1>
   <p class="title">CEO & Founder, Example</p>
