@@ -16,7 +16,7 @@ api = Api(app)
 def index():
     latitude, longitude = 51.508742, -0.120850
     loc = {"lat": latitude, "lng": longitude}
-    return render_template("index2.html", loc=loc)
+    return render_template("index.html", loc=loc)
 
 @app.route('/', methods = ['POST'])
 def PostHandler():
