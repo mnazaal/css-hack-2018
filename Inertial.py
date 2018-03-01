@@ -5,6 +5,8 @@ import time
 import numpy as np
 import os
 
+os.chdir("/home/pi/css-hack-2018")
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT)
