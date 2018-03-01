@@ -44,13 +44,13 @@ class App():
 
         # Transmit the data button!!
         self.SBD = Button(frame,
-                          text="Transmit data",
+                          text="Tx",
                           command= lambda : self.transmit("CSS:Hackathon!"))
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
         # Receive the data button!!
         self.SBD = Button(frame,
-                          text="Transmit data",
+                          text="Rx",
                           command=lambda: self.receive)
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
@@ -59,17 +59,21 @@ class App():
         while True:
             time.sleep(0.5)
             _read_line = iridium.readline().strip()
-            if _read_line != "":
+            if _read_line != b"":
                 _information = _read_line
                 print(_information)
-            if _read_line == "ERROR":
+            if _read_line == b"ERROR":
                 iridium.flush()
                 print("X: ERROR in Response. Try Again\n")
                 break
-            if confirmation in _read_line:  # Confirmation code you should get from the device
+            if confirmation.encode() in _read_line:  # Confirmation code you should get from the device
                 iridium.flush()
                 print(message + "\r\n")
                 return message  # get away from the while loop
+
+    # Stupid Encode Function
+    def s_en(self, stringToEncode):
+        return stringToEncode.encode()
 
     # MT Function
     def receive(self):
@@ -98,52 +102,52 @@ class App():
         # Enabling indicator event reporting
         print("\n1. Enabling error indicator...\n")
         command = "AT+CIER=1,0,1,0"
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         self.response("OK", "Indicator enabled\n")
         """Reply is OK"""
 
         # Initializing
         print("\n2. Load the message...\n")
         command = "AT+SBDWB=" + str(len(message))
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         self.response("READY", "Trying to transmit")
         """Reply is READY"""
 
         # Load the message
-        iridium.write(message)  # + "\r\n"
+        iridium.write(self.s_en(message))  # + "\r\n"
         checksum = 0
         for c in message:  # Message is specified in the TkInter as above
             checksum = checksum + ord(c)
-        iridium.write(chr(checksum >> 8))  # Adding checksum... [Verified it's working]
-        iridium.write(chr(checksum & 0xFF))
+        iridium.write(self.s_en(chr(checksum >> 8)))  # Adding checksum... [Verified it's working]
+        iridium.write(self.s_en(chr(checksum & 0xFF)))
         self.response("0", "Loaded successfully...")
         """Reply is 0"""
 
         # Send the message
         print("\n3. Transmit the message...")
         command = "AT+SBDIX"
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         while True:
             time.sleep(0.5)
             _read_line = iridium.readline().strip()
-            if _read_line != "":  # Whatever they give it back to us...
+            if _read_line != b"":  # Whatever they give it back to us...
                 _information = _read_line
-                print(_information)
+                print(_information.decode())
             if "SBDIX: " in _read_line:  # Check for sequence +SBDIX
                 iridium.flush()
-                print(message + "\r\n")
+                print(message.decode() + "\r\n")
                 break  # get away from the while loop
         """Reply is +SBDIX: ?,?,?,?,?,?"""
 
         # Ending the transmission
         command = "AT+SBDD0"  # Clearing buffer
-        iridium.write(command + "\r\n")  # Ending, don't care what it gave back to us...
+        iridium.write(self.s_en(command + "\r\n"))  # Ending, don't care what it gave back to us...
 
     # PING FUNCTION - AT&K0
     def ping(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT"
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         # i=0
         while (True):
             time.sleep(0.5)
@@ -162,29 +166,30 @@ class App():
 
     # SIGNAL STRENGTH REQUEST
     def signal_strength(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT+CSQ"
-        iridium.write(command + "\r\n")
-        print ("Awaiting for Signal Strength Response")
+        iridium.write(self.s_en(command + "\r\n"))
+        print("Awaiting for Signal Strength Response")
         time.sleep(0.5)
         # i=0
-        while (True):
-            time.sleep(0.1)
-            _read_line = iridium.readline().strip()
-
-            if (_read_line != ""):
-                _information = _read_line
-                print (_information)
-            if (_read_line == "ERROR"):
-                iridium.flush()
-                print("ERROR in Response. Try Again\n")
-                break
-            if (_read_line == "OK"):
-                iridium.flush()
-                print("Response Received Successfully\n")
-                break
+        self.response("OK", "Response Received Successfully")
+        # while True:
+        #     time.sleep(0.1)
+        #     _read_line = iridium.readline().strip()
+        #
+        #     if _read_line != b"":
+        #         _information = _read_line
+        #         print (_information)
+        #     if _read_line == b"ERROR":
+        #         iridium.flush()
+        #         print("ERROR in Response. Try Again\n")
+        #         break
+        #     if _read_line == b"OK":
+        #         iridium.flush()
+        #         print("Response Received Successfully\n")
+        #         break
         extra_read_line = iridium.readline().strip()
-        print (extra_read_line + "\n")  # Blanc??
+        print(extra_read_line.decode() + "\n")  # Blanc??
 
     # POWER DOWN IRIDIUM
     def turn_off(self):
