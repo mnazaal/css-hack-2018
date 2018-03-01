@@ -1,9 +1,14 @@
 import smbus
+import RPi.GPIO as GPIO
 import math
 import time
 import numpy as np
 import os
 
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(16, GPIO.OUT)
+GPIO.setup(18, GPIO.IN)
 
 THRESHOLD = 0.0007679
 #power management registers, on, off, sleep, etc.
@@ -51,15 +56,22 @@ bus.write_byte_data(MPU6050_ADDRESS_DEFAULT, PWR_MGMT_1, 0)
 changeAccelRange(3)
 
 #read scaled accel data
-while(True):
-	accel_xout_scaled = readWord2C(MPU6050_RA_ACCEL_XOUT_H)/2048.0
-	accel_yout_scaled = readWord2C(MPU6050_RA_ACCEL_YOUT_H)/2048.0
-	accel_zout_scaled = readWord2C(MPU6050_RA_ACCEL_ZOUT_H)/2048.0
-	accel = np.array([accel_xout_scaled, accel_yout_scaled, accel_zout_scaled])
-	accelmod = np.inner(np.multiply(0.001,accel),np.multiply(accel, 0.001))
-	if (accelmod>THRESHOLD):
-		print(accelmod)
-		os.system("sudo python RadioCommsv2.py")	
+try:
+	while(True):
+		accel_xout_scaled = readWord2C(MPU6050_RA_ACCEL_XOUT_H)/2048.0
+		accel_yout_scaled = readWord2C(MPU6050_RA_ACCEL_YOUT_H)/2048.0
+		accel_zout_scaled = readWord2C(MPU6050_RA_ACCEL_ZOUT_H)/2048.0
+		accel = np.array([accel_xout_scaled, accel_yout_scaled, accel_zout_scaled])
+		accelmod = np.inner(np.multiply(0.001,accel),np.multiply(accel, 0.001))
+		if (accelmod>THRESHOLD):
+			print(accelmod)
+			GPIO.output(16, GPIO.HIGH)
+			os.system("sudo python RadioCommsv2.py")
+			while(not GPIO.input(18)):
+				time.sleep(10)
+			GPIO.output(16, GPIO.LOW)
+except: 
+	print("oh dear some kind of error occured :(")
 
-
-
+finally:
+	GPIO.cleanup()
