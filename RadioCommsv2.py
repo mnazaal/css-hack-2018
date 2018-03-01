@@ -1,16 +1,10 @@
 """Built upon the code given by Catapult
-Author: Trevor Leung"""
+Author: Trevor Leung
+Date: 01/03/2018"""
 
 from Tkinter import *
 import Tkinter as tk
-import threading
-# import Image
 from PIL import Image, ImageTk
-from gi.repository import Gtk
-import sys
-import glob
-import signal
-import sys
 import serial
 import time
 
@@ -42,14 +36,14 @@ class App():
 
         # Transmit the data button!!
         self.SBD = Button(frame,
-                          text="Transmit data",
-                          command= lambda : self.transmit("CSS:Hackathon!"))
+                          text="Tx",
+                          command=lambda:self.transmit("CSS:Hackathon!"))
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
         # Receive the data button!!
         self.SBD = Button(frame,
-                          text="Transmit data",
-                          command=lambda: self.receive)
+                          text="Rx",
+                          command=self.receive)
         self.SBD.pack(side=TOP, anchor=W, fill=X, expand=YES)
 
     # Response function
@@ -82,8 +76,8 @@ class App():
         print("2. Initiating an SBD session")
         command = "AT+SBDIXA"
         iridium.write(command + "\r\n")
-        self.response("+SBDIXA:", "Read message code")
-        "Reply is +SBDIXA:SOMETHING"
+        self.response("+SBDIX:", "Read message code")  # No A apparently
+        "Reply is +SBDIX:SOMETHING"
 
         # Getting the message
         print("3. Getting the message")
