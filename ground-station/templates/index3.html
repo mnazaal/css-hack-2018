@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Impact Link</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      /* Optional: Makes the sample page fill the window. */
+	  
+	  div.relative{
+        position: relative;
+        left: 30px;
+        top: 30px;
+      }
+	  
+      html, body {
+        height: 75%;
+        margin: 0;
+        padding: 0;
+      }
+	  	  
+      #map-canvas
+      {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+
+
+  <body>
+   <script async defer  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9g_0L3QH1BpEjpB8_2Py7y-kdlgi9TdU&callback=initMap"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <div id="map-canvas"></div>
+
+
+    <script>
+      var locationjson = JSON.parse(' {{ loc | tojson | safe }}');
+      function initMap() {
+          map = new google.maps.Map(document.getElementById('map-canvas'), {
+          center: locationjson,
+          zoom: 15
+        });
+        marker = new google.maps.Marker({ position: locationjson, map: map, title:'Help me'} );
+      
+        marker.setMap( map );
+        moveMarker(map, marker)
+
+      }
+    
+      function moveMarker(map, marker) {
+            setTimeout( function() {
+                var lat1 = locationjson.lat;
+                var lng1 = locationjson.lng;
+                
+                marker.setPosition(new google.maps.LatLng(lat1, lng1) );
+                map.panTo( new google.maps.LatLng( lat1, lng1) );
+                }, 1500);
+    };
+     
+    
+    </script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9g_0L3QH1BpEjpB8_2Py7y-kdlgi9TdU
+&callback=initMap"
+    async defer></script>-->
+
+<div class="relative">
+  <img src="/static/416x416.jpg" alt="ElonMusk" style="width:10%"></img>
+  <h1>Elongated Musk</h1>
+  <p class="title">CEO & Founder</p>
+  <p>SpaceX, The Boring company, OpenAI</p>
+  <a href="#"><i class="fa fa-dribbble"></i></a> 
+  <a href="#"><i class="fa fa-twitter"></i></a> 
+  <a href="#"><i class="fa fa-linkedin"></i></a> 
+  <a href="#"><i class="fa fa-facebook"></i></a> 
+  <p><button>Contact</button></p>
+</div>
+
+
+  </body>
+</html>
