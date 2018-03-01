@@ -14,13 +14,25 @@ api = Api(app)
 
 @app.route('/')
 def index():
+    #data = request.get_data()
+    #data = data.decode()
+    #data = data.split("&")
+    #latitude, longitude = data[5].split("=")[1], data[6].split("=")[1]
     latitude, longitude = 51.508742, -0.120850
     loc = {"lat": latitude, "lng": longitude}
     return render_template("index.html", loc=loc)
-
+   
 @app.route('/', methods = ['POST'])
 def PostHandler():
     data = request.get_data()
-    return str(data)
-#class Signal(Resource):
-    
+    print(str(data))
+    data = data.decode()
+    data = data.split("&")
+    latitude, longitude = data[5].split("=")[1], data[6].split("=")[1]
+    print(latitude)
+    print(longitude)
+    loc = {"lat": latitude, "lng": longitude}
+    return render_template("index.html", loc=loc)
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=4040,  debug=True)
