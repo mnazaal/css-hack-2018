@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Impact Link</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -20,6 +20,15 @@
         height: 400px;
         width: 100%;
       }
+      div.relative
+      {
+        position = relative;
+        left: 30px;
+        top: 30px;
+      }
+
+
+      
     </style>
   </head>
 
@@ -37,7 +46,7 @@
       function initMap() {
           map = new google.maps.Map(document.getElementById('map-canvas'), {
           center: locationjson,
-          zoom: 8
+          zoom: 15
         });
         marker = new google.maps.Marker({ position: locationjson, map: map, title:'Help me'} );
       
@@ -55,17 +64,17 @@
                 map.panTo( new google.maps.LatLng( lat1, lng1) );
                 }, 1500);
     };
-     initMap();
+     
     
     </script>
     <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9g_0L3QH1BpEjpB8_2Py7y-kdlgi9TdU
 &callback=initMap"
     async defer></script>-->
 
-<div class="float">
+<div class="centered">
   <img src="/static/416x416.jpg" alt="ElonMusk" style="width:10%">
-  <h1>Elon Musk</h1>
-  <p class="title">CEO & Founder, Example</p>
+  <h1>Elongated Musk</h1>
+  <p class="title">CEO & Founder</p>
   <p>SpaceX, The Boring company, OpenAI</p>
   <a href="#"><i class="fa fa-dribbble"></i></a> 
   <a href="#"><i class="fa fa-twitter"></i></a> 
@@ -73,6 +82,7 @@
   <a href="#"><i class="fa fa-facebook"></i></a> 
   <p><button>Contact</button></p>
 </div>
+
 
   </body>
 </html>
