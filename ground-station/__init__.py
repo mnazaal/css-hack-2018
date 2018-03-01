@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 #from flask_googlemaps import GoogleMaps
 from flask_restful import Resource, Api, reqparse
+import reverse_geocoder as rg
 
 app = Flask(__name__)
 
@@ -32,6 +33,10 @@ def PostHandler():
     print(latitude)
     print(longitude)
     loc = {"lat": latitude, "lng": longitude}
+    locextra = rg.search((latitude, longitude))[0]
+    area = locextra['name']
+    country = locextra['admin1']
+    print(str(area + ', ' + country))
     return render_template("index.html", loc=loc)
 
 if __name__ == "__main__":
