@@ -68,7 +68,6 @@ class App():
                 iridium.flush()
                 print(message + "\r\n")
                 return message
-                break  # get away from the while loop
 
     # MT Function
     def receive(self):
@@ -116,23 +115,14 @@ class App():
             checksum = checksum + ord(c)
         iridium.write(chr(checksum >> 8))  # Adding checksum... [Verified it's working]
         iridium.write(chr(checksum & 0xFF))
-        self.response("0", "Loaded successfully...")
-        """Reply is 0"""
+        self.response("0", "Loaded...")
+        """Reply is 0 if successful"""
 
         # Send the message
         print("\n3. Transmit the message...")
         command = "AT+SBDIX"
         iridium.write(command + "\r\n")
-        while (True):
-            time.sleep(0.5)
-            _read_line = iridium.readline().strip()
-            if (_read_line != ""):  # Whatever they give it back to us...
-                _information = _read_line
-                print(_information)
-            if ("SBDIX: " in _read_line):  # Check for sequence +SBDIX
-                iridium.flush()
-                print(message + "\r\n")
-                break  # get away from the while loop
+        self.response("SBDIX:", "Replied")
         """Reply is +SBDIX: ?,?,?,?,?,?"""
 
         # Ending the transmission
@@ -141,57 +131,28 @@ class App():
 
     # PING FUNCTION - AT&K0
     def ping(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT"
         iridium.write(command + "\r\n")
-        # i=0
-        while (True):
-            time.sleep(0.5)
-            _read_line = iridium.readline().strip()
-            if (_read_line != ""):
-                _information = _read_line
-                print (_information)
-            if (_read_line == "ERROR"):
-                iridium.flush()
-                print("ERROR in Response. Try Again\n")
-                break
-            if (_read_line == "OK"):
-                iridium.flush()
-                print("Response Received Successfully\n")
-                break
+        self.response("OK", "Response Received Successfully")
 
     # SIGNAL STRENGTH REQUEST
     def signal_strength(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT+CSQ"
         iridium.write(command + "\r\n")
-        print ("Awaiting for Signal Strength Response")
+        print("Awaiting for Signal Strength Response")
         time.sleep(0.5)
-        # i=0
-        while (True):
-            time.sleep(0.1)
-            _read_line = iridium.readline().strip()
-
-            if (_read_line != ""):
-                _information = _read_line
-                print (_information)
-            if (_read_line == "ERROR"):
-                iridium.flush()
-                print("ERROR in Response. Try Again\n")
-                break
-            if (_read_line == "OK"):
-                iridium.flush()
-                print("Response Received Successfully\n")
-                break
+        self.response("OK", "Response Received Successfully")
         extra_read_line = iridium.readline().strip()
-        print (extra_read_line + "\n")  # Blanc??
+        print(extra_read_line.decode() + "\n")
 
     # POWER DOWN IRIDIUM
     def turn_off(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT*F"
         iridium.write(command + "\r")
-        print ("Turn off the device now")
+        print("Turn off the device now")
         print("\n")
         iridium.flush()
 

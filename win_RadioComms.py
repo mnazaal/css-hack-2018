@@ -1,18 +1,12 @@
 """Built upon the code given by Catapult
 Author: Trevor Leung
+Date: 01/03/2018
 ====================
 This is built for the lovely window instead"""
 
 from tkinter import *
 import tkinter as tk
-# import threading
-# import Image
 from PIL import Image, ImageTk
-# from gi.repository import Gtk
-# import sys
-# import glob
-# import signal
-# import sys
 import serial
 import time
 
@@ -68,8 +62,9 @@ class App():
                 break
             if confirmation.encode() in _read_line:  # Confirmation code you should get from the device
                 iridium.flush()
+                # print(_read_line.decode() + "\r\n")
                 print(message + "\r\n")
-                return message  # get away from the while loop
+                return _read_line.decode()  # get away from the while loop
 
     # Stupid Encode Function
     def s_en(self, stringToEncode):
@@ -80,21 +75,21 @@ class App():
         # Here we go again
         print("\n1. Query the device for registration status")
         command = "AT+SBDREG?"
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         self.response("+SBDREG:2", "Read message code")
         "Reply is +SBDREG:SOMETHING"
 
         # Initiate an SBD session in answer to the automatic notification
         print("2. Initiating an SBD session")
         command = "AT+SBDIXA"
-        iridium.write(command + "\r\n")
-        self.response("+SBDIXA:", "Read message code")
-        "Reply is +SBDIXA:SOMETHING"
+        iridium.write(self.s_en(command + "\r\n"))
+        self.response("+SBDIX:", "Read message code")  # No A apparently
+        "Reply is +SBDIX:SOMETHING"
 
         # Getting the message
         print("3. Getting the message")
         command = "AT+SBDRB"
-        iridium.write(command + "\r\n")
+        iridium.write(self.s_en(command + "\r\n"))
         self.rx_message = self.response("", "Message received")  # Whatever we have literally
 
     # MO Function
@@ -120,23 +115,14 @@ class App():
             checksum = checksum + ord(c)
         iridium.write(self.s_en(chr(checksum >> 8)))  # Adding checksum... [Verified it's working]
         iridium.write(self.s_en(chr(checksum & 0xFF)))
-        self.response("0", "Loaded successfully...")
-        """Reply is 0"""
+        self.response("", "Loaded...")
+        """Reply is 0 if successful"""
 
         # Send the message
         print("\n3. Transmit the message...")
         command = "AT+SBDIX"
         iridium.write(self.s_en(command + "\r\n"))
-        while True:
-            time.sleep(0.5)
-            _read_line = iridium.readline().strip()
-            if _read_line != b"":  # Whatever they give it back to us...
-                _information = _read_line
-                print(_information.decode())
-            if "SBDIX: " in _read_line:  # Check for sequence +SBDIX
-                iridium.flush()
-                print(message.decode() + "\r\n")
-                break  # get away from the while loop
+        self.response("SBDIX:", "Replied")
         """Reply is +SBDIX: ?,?,?,?,?,?"""
 
         # Ending the transmission
@@ -148,21 +134,7 @@ class App():
         print("\nCommand Sent. Awaiting Response\n")
         command = "AT"
         iridium.write(self.s_en(command + "\r\n"))
-        # i=0
-        while (True):
-            time.sleep(0.5)
-            _read_line = iridium.readline().strip()
-            if (_read_line != ""):
-                _information = _read_line
-                print (_information)
-            if (_read_line == "ERROR"):
-                iridium.flush()
-                print("ERROR in Response. Try Again\n")
-                break
-            if (_read_line == "OK"):
-                iridium.flush()
-                print("Response Received Successfully\n")
-                break
+        self.response("OK", "Response Received Successfully")
 
     # SIGNAL STRENGTH REQUEST
     def signal_strength(self):
@@ -171,17 +143,16 @@ class App():
         iridium.write(self.s_en(command + "\r\n"))
         print("Awaiting for Signal Strength Response")
         time.sleep(0.5)
-        # i=0
         self.response("OK", "Response Received Successfully")
         extra_read_line = iridium.readline().strip()
-        print(extra_read_line.decode() + "\n")  # Blanc??
+        print(extra_read_line.decode() + "\n")
 
     # POWER DOWN IRIDIUM
     def turn_off(self):
-        print ("\nCommand Sent. Awaiting Response\n")
+        print("\nCommand Sent. Awaiting Response\n")
         command = "AT*F"
         iridium.write(command + "\r")
-        print ("Turn off the device now")
+        print("Turn off the device now")
         print("\n")
         iridium.flush()
 
